@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+    <template class="GmailPage" parent="AdwNavigationPage">
+        <property name="title" translatable="yes">Add an account</property>
+        <child>
+            <object class="AdwToolbarView">
+                <child type="top">
+                    <object class="AdwHeaderBar" />
+                </child>
+                <property name="content">
+                    <object class="GtkBox">
+                        <property name="orientation">vertical</property>
+                        <child>
+                            <object class="GtkListBox">
+                                <style>
+                                    <class name="default-margin" />
+                                    <class name="boxed-list"/>
+                                </style>  
+                                <child>
+                                    <object class="AdwPasswordEntryRow" id="password">
+                                        <property name="title">Password</property>
+                                        <signal name="changed"
+                                            handler="handle_password_changed"
+                                            swapped="true" />
+                                    </object>
+                                </child>
+                            </object>
+                        </child>
+                        <child>
+                            <object class="GtkButton" id="button">
+                                <style>
+                                    <class name="default-margin" />
+                                    <class name="suggested-action" />
+                                </style>
+                                <property name="label">Login</property>
+                                <property name="sensitive">false</property>
+                                <signal name="clicked"
+                                    handler="handle_login_clicked"
+                                    swapped="true" />
+                            </object>
+                        </child>
+                    </object>
+                </property>
+            </object>
+        </child>
+    </template>
+</interface>

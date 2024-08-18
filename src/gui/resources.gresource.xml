@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gresources>
+    <gresource prefix="/org/maily/">
+        <file compressed="true" preprocess="xml-stripblanks">login/name_email_page.ui</file>
+        <file compressed="true" preprocess="xml-stripblanks">login/gmail_page.ui</file>
+        <file compressed="true" preprocess="xml-stripblanks">login/dialog.ui</file>
+        <file compressed="true">style.css</file>
+    </gresource>
+</gresources>
