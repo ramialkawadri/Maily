@@ -1,9 +1,11 @@
 mod gui;
+mod core;
 
 use adw::prelude::*;
-use gtk::{gio, glib, CssProvider, gdk};
 use adw::{HeaderBar, Window};
+use gtk::{gdk, gio, glib, CssProvider};
 use gui::*;
+
 
 const APP_ID: &str = "org.maily";
 

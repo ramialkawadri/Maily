@@ -1,5 +1,4 @@
-mod name_email_page;
-mod gmail_page;
+mod first_page;
 
 use glib::Object;
 use gtk::glib;
@@ -17,40 +16,40 @@ impl LoginDialog {
 }
 
 mod imp {
+    use crate::core::email_client;
+    use crate::core::email_client::{EmailClient, ProviderType};
     use adw::subclass::prelude::*;
+    use adw::{NavigationView, Toast, ToastOverlay};
     use glib::subclass::InitializingObject;
     use gtk::{glib, CompositeTemplate};
-    use adw::NavigationView;
     use std::cell::RefCell;
+    use std::default::Default;
 
     #[derive(CompositeTemplate, Default)]
     #[template(resource = "/org/maily/login/dialog.ui")]
     pub struct LoginDialog {
         #[template_child]
-        pub name_email_page: TemplateChild<super::name_email_page::NameEmailPage>,
-
-        #[template_child]
-        pub gmail_page: TemplateChild<super::gmail_page::GmailPage>,
+        pub first_page: TemplateChild<super::first_page::FirstPage>,
 
         #[template_child]
         pub navigation_view: TemplateChild<NavigationView>,
 
+        #[template_child]
+        pub toast_overlay: TemplateChild<ToastOverlay>,
+
         name: RefCell<String>,
-        email: RefCell<String>,
     }
 
     #[gtk::template_callbacks]
     impl LoginDialog {
         #[template_callback]
-        fn handle_next_clicked(&self, name: &str, email: &str) {
-            self.navigation_view.push(&self.gmail_page.get());
+        fn handle_next_clicked(&self, name: &str, provider: ProviderType) {
             *self.name.borrow_mut() = String::from(name);
-            *self.email.borrow_mut() = String::from(email);
-        }
-
-        #[template_callback]
-        fn handle_login_clicked(&self, _password: &str) {
-            glib::g_message!("Auth", "Logging in {}.", self.email.borrow());
+            let client = email_client::get_email_client(provider);
+            if let Err(error) = client.authenticate() {
+                let toast = Toast::builder().title(error).build();
+                self.toast_overlay.add_toast(toast);
+            }
         }
     }
 
@@ -76,4 +75,3 @@ mod imp {
 
     impl AdwDialogImpl for LoginDialog {}
 }
-

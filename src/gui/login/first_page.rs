@@ -2,12 +2,12 @@ use glib::Object;
 use gtk::glib;
 
 glib::wrapper! {
-    pub struct GmailPage(ObjectSubclass<imp::GmailPage>)
+    pub struct FirstPage(ObjectSubclass<imp::FirstPage>)
         @extends adw::NavigationPage, gtk::Widget,
         @implements gtk::Accessible, gtk::Buildable, gtk::ConstraintTarget;
 }
 
-impl GmailPage {
+impl FirstPage {
     pub fn new() -> Self {
         Object::builder().build()
     }
@@ -15,41 +15,49 @@ impl GmailPage {
 
 mod imp {
     use adw::subclass::prelude::*;
-    use adw::PasswordEntryRow;
+    use adw::{EntryRow, ComboRow};
     use glib::subclass::InitializingObject;
     use glib::subclass::Signal;
     use gtk::prelude::*;
     use gtk::{glib, Button, CompositeTemplate};
     use std::sync::OnceLock;
+    use crate::core::email_client::ProviderType;
 
     #[derive(CompositeTemplate, Default)]
-    #[template(resource = "/org/maily/login/gmail_page.ui")]
-    pub struct GmailPage {
+    #[template(resource = "/org/maily/login/first_page.ui")]
+    pub struct FirstPage {
         #[template_child]
         pub button: TemplateChild<Button>,
 
         #[template_child]
-        pub password: TemplateChild<PasswordEntryRow>,
+        pub name: TemplateChild<EntryRow>,
+
+        #[template_child]
+        pub provider: TemplateChild<ComboRow>,
     }
 
     #[gtk::template_callbacks]
-    impl GmailPage {
+    impl FirstPage {
         #[template_callback]
-        pub fn handle_password_changed(&self, entry_row: &PasswordEntryRow) {
-            self.button.set_sensitive(!entry_row.text().is_empty());
+        fn handle_email_name_changed(&self, _: &EntryRow) {
+            self.button.set_sensitive(self.should_enable_next_button());
+        }
+
+        fn should_enable_next_button(&self) -> bool {
+            !self.name.text().is_empty()
         }
 
         #[template_callback]
-        pub fn handle_login_clicked(&self, _: &Button) {
+        fn handle_next_clicked(&self, _: &Button) {
             let obj = self.obj();
-            obj.emit_by_name::<()>("login-clicked", &[&self.password.text()]);
+            obj.emit_by_name::<()>("next-clicked", &[&self.name.text(), &ProviderType::GMail]);
         }
     }
 
     #[glib::object_subclass]
-    impl ObjectSubclass for GmailPage {
-        const NAME: &'static str = "GmailPage";
-        type Type = super::GmailPage;
+    impl ObjectSubclass for FirstPage {
+        const NAME: &'static str = "FirstPage";
+        type Type = super::FirstPage;
         type ParentType = adw::NavigationPage;
 
         fn class_init(klass: &mut Self::Class) {
@@ -62,19 +70,19 @@ mod imp {
         }
     }
 
-    impl ObjectImpl for GmailPage {
+    impl ObjectImpl for FirstPage {
         fn signals() -> &'static [Signal] {
             static SIGNALS: OnceLock<Vec<Signal>> = OnceLock::new();
             SIGNALS.get_or_init(|| {
-                vec![Signal::builder("login-clicked")
-                    // Parameters: Name, Email
-                    .param_types([str::static_type()])
+                vec![Signal::builder("next-clicked")
+                    // Parameters: Name, Provider
+                    .param_types([str::static_type(), ProviderType::static_type()])
                     .build()]
             })
         }
     }
 
-    impl WidgetImpl for GmailPage {}
+    impl WidgetImpl for FirstPage {}
 
-    impl NavigationPageImpl for GmailPage {}
+    impl NavigationPageImpl for FirstPage {}
 }

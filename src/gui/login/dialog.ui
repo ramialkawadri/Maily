@@ -1,22 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
-    <template class="LoginDialog" parent="AdwDialog">
-        <property name="content-width">500</property>
+  <template class="LoginDialog" parent="AdwDialog">
+    <property name="content-width">500</property>
+    <property name="content-height">310</property>
+    <child>
+      <object class="AdwToastOverlay" id="toast_overlay">
         <child>
-            <object class="AdwNavigationView" id="navigation_view">
-                <child>
-                    <object class="NameEmailPage" id="name_email_page">
-                        <signal name="next-clicked"
-                            handler="handle_next_clicked" swapped="true" />
-                    </object>
-                </child>
-                <child>
-                    <object class="GmailPage" id="gmail_page">
-                        <signal name="login-clicked"
-                            handler="handle_login_clicked" swapped="true" />
-                    </object>
-                </child>
-            </object>
+          <object class="AdwNavigationView" id="navigation_view">
+            <child>
+              <object class="FirstPage" id="first_page">
+                <signal name="next-clicked"
+                  handler="handle_next_clicked" swapped="true" />
+              </object>
+            </child>
+          </object>
         </child>
-    </template>
+      </object>
+    </child>
+  </template>
 </interface>
