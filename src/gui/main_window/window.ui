@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="MainWindow" parent="AdwApplicationWindow">
+    <property name="default-height">700</property>
+    <property name="default-width">1200</property>
+    <property name="title">Maily</property>
+    <property name="content">
+      <object class="AdwNavigationSplitView">
+        <property name="min-sidebar-width">470</property>
+        <property name="max-sidebar-width">780</property>
+        <property name="sidebar-width-fraction">0.47</property>
+        <property name="sidebar">
+          <object class="AdwNavigationPage">
+            <property name="title" translatable="yes">Inbox</property>
+              <property name="child">
+                <object class="AdwNavigationSplitView">
+                  <property name="min-sidebar-width">260</property>
+                  <property name="sidebar-width-fraction">0.38</property>
+                  <property name="sidebar">
+                    <object class="AdwNavigationPage">
+                      <property name="title" translatable="yes">Mail</property>
+                      <property name="child">
+                        <object class="AdwToolbarView">
+                          <child type="top">
+                            <object class="AdwHeaderBar" />
+                          </child>
+                        </object>
+                      </property>
+                    </object>
+                  </property>
+                </object>
+              </property>
+          </object>
+      </property>
+        
+      </object>
+    </property>
+  </template>
+</interface>

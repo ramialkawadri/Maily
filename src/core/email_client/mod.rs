@@ -3,12 +3,11 @@ mod gmail;
 use gtk::glib;
 
 pub trait EmailClient {
-    fn authenticate(&self) -> Result<(), String>;
 }
 
-pub fn get_email_client(provider_type: ProviderType) -> impl EmailClient {
+pub async fn get_email_client(provider_type: ProviderType) -> Result<impl EmailClient, String> {
     match provider_type {
-        ProviderType::GMail => gmail::GmailEmailClient {},
+        ProviderType::GMail => gmail::GmailEmailClient::new().await,
     }
 }
 

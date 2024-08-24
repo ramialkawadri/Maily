@@ -1,7 +1,13 @@
 mod first_page;
 
+use adw::prelude::*;
+use adw::Toast;
 use glib::Object;
 use gtk::glib;
+use gtk::subclass::prelude::*;
+
+use crate::core::email_client;
+use crate::core::email_client::ProviderType;
 
 glib::wrapper! {
     pub struct LoginDialog(ObjectSubclass<imp::LoginDialog>)
@@ -9,17 +15,26 @@ glib::wrapper! {
         @implements gtk::Accessible, gtk::Buildable, gtk::ConstraintTarget;
 }
 
+#[gtk::template_callbacks]
 impl LoginDialog {
     pub fn new() -> Self {
         Object::builder().build()
     }
+
+    #[template_callback]
+    async fn handle_next_clicked(&self, _name: &str, provider: ProviderType) {
+        let client = email_client::get_email_client(provider);
+        if let Err(error) = client.await {
+            let toast = Toast::builder().title(error).build();
+            self.imp().toast_overlay.add_toast(toast);
+        }
+        self.close();
+    }
 }
 
 mod imp {
-    use crate::core::email_client;
-    use crate::core::email_client::{EmailClient, ProviderType};
     use adw::subclass::prelude::*;
-    use adw::{NavigationView, Toast, ToastOverlay};
+    use adw::{NavigationView, ToastOverlay};
     use glib::subclass::InitializingObject;
     use gtk::{glib, CompositeTemplate};
     use std::cell::RefCell;
@@ -37,20 +52,7 @@ mod imp {
         #[template_child]
         pub toast_overlay: TemplateChild<ToastOverlay>,
 
-        name: RefCell<String>,
-    }
-
-    #[gtk::template_callbacks]
-    impl LoginDialog {
-        #[template_callback]
-        fn handle_next_clicked(&self, name: &str, provider: ProviderType) {
-            *self.name.borrow_mut() = String::from(name);
-            let client = email_client::get_email_client(provider);
-            if let Err(error) = client.authenticate() {
-                let toast = Toast::builder().title(error).build();
-                self.toast_overlay.add_toast(toast);
-            }
-        }
+        pub name: RefCell<String>,
     }
 
     #[glib::object_subclass]
@@ -61,7 +63,7 @@ mod imp {
 
         fn class_init(klass: &mut Self::Class) {
             klass.bind_template();
-            klass.bind_template_callbacks();
+            klass.bind_template_instance_callbacks();
         }
 
         fn instance_init(obj: &InitializingObject<Self>) {

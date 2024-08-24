@@ -2,14 +2,13 @@ mod gui;
 mod core;
 
 use adw::prelude::*;
-use adw::{HeaderBar, Window};
 use gtk::{gdk, gio, glib, CssProvider};
 use gui::*;
 
-
 const APP_ID: &str = "org.maily";
 
-fn main() -> glib::ExitCode {
+#[tokio::main]
+async fn main() -> glib::ExitCode {
     gio::resources_register_include!("resources.gresource")
         .expect("Failed to register resources.");
 
@@ -33,17 +32,12 @@ fn load_css() {
 }
 
 fn build_ui(app: &adw::Application) {
-    // TODO: fix
-    let header = HeaderBar::builder().build();
-    let window = Window::builder()
-        .application(app)
-        .width_request(800)
-        .height_request(800)
-        .content(&header)
-        .build();
+    let window = main_window::MainWindow::new(app);
 
+    // TODO: enable if needed
     let dialog = login::LoginDialog::new();
-    dialog.present(Some(&window));
+    AdwDialogExt::present(&dialog, Some(&window));
+    dialog.close();
 
     window.present();
 }
