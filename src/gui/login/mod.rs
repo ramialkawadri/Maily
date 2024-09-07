@@ -23,12 +23,18 @@ impl LoginDialog {
 
     #[template_callback]
     async fn handle_next_clicked(&self, _name: &str, provider: ProviderType) {
-        let client = email_client::get_email_client(provider);
-        if let Err(error) = client.await {
-            let toast = Toast::builder().title(error).build();
-            self.imp().toast_overlay.add_toast(toast);
+        match email_client::get_email_client(provider).await {
+            Ok(client) => {
+                let obj = self.imp().obj();
+                let boxed_object = glib::BoxedAnyObject::new(client);
+                obj.emit_by_name::<()>("account-added", &[&boxed_object]);
+                self.close();
+            }
+            Err(error) => {
+                let toast = Toast::builder().title(error).build();
+                self.imp().toast_overlay.add_toast(toast);
+            }
         }
-        self.close();
     }
 }
 
@@ -36,9 +42,11 @@ mod imp {
     use adw::subclass::prelude::*;
     use adw::{NavigationView, ToastOverlay};
     use glib::subclass::InitializingObject;
+    use glib::subclass::Signal;
     use gtk::{glib, CompositeTemplate};
     use std::cell::RefCell;
     use std::default::Default;
+    use std::sync::OnceLock;
 
     #[derive(CompositeTemplate, Default)]
     #[template(resource = "/org/maily/login/dialog.ui")]
@@ -71,7 +79,16 @@ mod imp {
         }
     }
 
-    impl ObjectImpl for LoginDialog {}
+    impl ObjectImpl for LoginDialog {
+        fn signals() -> &'static [Signal] {
+            static SIGNALS: OnceLock<Vec<Signal>> = OnceLock::new();
+            SIGNALS.get_or_init(|| {
+                vec![Signal::builder("account-added")
+                    .param_types([glib::Type::OBJECT])
+                    .build()]
+            })
+        }
+    }
 
     impl WidgetImpl for LoginDialog {}
 

@@ -5,34 +5,73 @@
     <property name="default-width">1200</property>
     <property name="title">Maily</property>
     <property name="content">
-      <object class="AdwNavigationSplitView">
+      <object class="AdwNavigationSplitView" id="outer_view">
         <property name="min-sidebar-width">470</property>
         <property name="max-sidebar-width">780</property>
         <property name="sidebar-width-fraction">0.47</property>
         <property name="sidebar">
-          <object class="AdwNavigationPage">
+          <object class="AdwNavigationPage" id="inner_view_page">
             <property name="title" translatable="yes">Inbox</property>
-              <property name="child">
-                <object class="AdwNavigationSplitView">
-                  <property name="min-sidebar-width">260</property>
-                  <property name="sidebar-width-fraction">0.38</property>
-                  <property name="sidebar">
-                    <object class="AdwNavigationPage">
-                      <property name="title" translatable="yes">Mail</property>
-                      <property name="child">
-                        <object class="AdwToolbarView">
-                          <child type="top">
-                            <object class="AdwHeaderBar" />
-                          </child>
-                        </object>
-                      </property>
-                    </object>
-                  </property>
-                </object>
-              </property>
+            <property name="child">
+              <object class="AdwNavigationSplitView" id="inner_view">
+                <property name="min-sidebar-width">260</property>
+                <property name="sidebar-width-fraction">0.38</property>
+                <property name="sidebar">
+                  <object class="AdwNavigationPage">
+                    <property name="title" translatable="yes">Mail</property>
+                    <property name="child">
+                      <object class="AdwToolbarView">
+                        <child type="top">
+                          <object class="AdwHeaderBar" />
+                        </child>
+                        <property name="content">
+                          <object class="GtkScrolledWindow">
+                            <property name="hscrollbar-policy">never</property>
+                            <child>
+                              <object class="GtkListBox" id="folders_list">
+                                <property name="selection-mode">browse</property>
+                                <style>
+                                  <class name="navigation-sidebar" />
+                                </style>
+                              </object>
+                            </child>
+                          </object>
+                        </property>
+                      </object>
+                    </property>
+                  </object>
+                </property>
+                <property name="content">
+                  <object class="AdwNavigationPage">
+                    <property name="title" translatable="yes">Inbox</property>
+                    <property name="child">
+                      <object class="AdwToolbarView">
+                        <child type="top">
+                          <object class="AdwHeaderBar" />
+                        </child>
+                        <property name="content">
+                          <object class="GtkScrolledWindow"></object>
+                        </property>
+                      </object>
+                    </property>
+                  </object>
+                </property>
+              </object>
+            </property>
           </object>
-      </property>
-        
+        </property>
+        <property name="content">
+          <object class="AdwNavigationPage" id="message_page">
+            <property name="title">Message</property>
+            <property name="child">
+              <object class="AdwToolbarView">
+                <child type="top">
+                  <object class="AdwHeaderBar" />
+                </child>
+              </object>
+            </property>
+          </object>
+        </property>
       </object>
     </property>
   </template>

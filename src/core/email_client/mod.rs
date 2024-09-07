@@ -1,13 +1,20 @@
 mod gmail;
 
 use gtk::glib;
+use std::pin::Pin;
+use std::future::Future;
+use std::marker::Send;
 
 pub trait EmailClient {
+    fn get_email(&self) -> Pin<Box<dyn Future<Output = String> + Send + '_>>;
 }
 
-pub async fn get_email_client(provider_type: ProviderType) -> Result<impl EmailClient, String> {
+pub async fn get_email_client(provider_type: ProviderType) -> Result<Box<dyn EmailClient>, String> {
     match provider_type {
-        ProviderType::GMail => gmail::GmailEmailClient::new().await,
+        ProviderType::GMail => {
+            let result = gmail::GmailEmailClient::new().await?;
+            Ok(Box::new(result))
+        },
     }
 }
 

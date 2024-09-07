@@ -41,7 +41,18 @@ impl GmailEmailClient {
     }
 }
 
-impl super::EmailClient for GmailEmailClient {}
+impl super::EmailClient for GmailEmailClient {
+    fn get_email(&self) -> Pin<Box<dyn Future<Output = String> + Send + '_>> {
+        Box::pin(async move {
+            let res = self.hub.users().get_profile("me").doit().await;
+
+            match res {
+                Ok(profile) => profile.1.email_address.unwrap(),
+                Err(e) => e.to_string(),
+            }
+        })
+    }
+}
 
 #[derive(Copy, Clone)]
 struct InstalledFlowBrowserDelegate;

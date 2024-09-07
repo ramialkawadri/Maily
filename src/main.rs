@@ -36,8 +36,7 @@ fn build_ui(app: &adw::Application) {
 
     // TODO: enable if needed
     let dialog = login::LoginDialog::new();
-    AdwDialogExt::present(&dialog, Some(&window));
-    dialog.close();
+    dialog.present(Some(&window));
 
     window.present();
 }

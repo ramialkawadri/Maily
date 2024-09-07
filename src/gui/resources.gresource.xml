@@ -5,5 +5,13 @@
         <file compressed="true" preprocess="xml-stripblanks">login/first_page.ui</file>
         <file compressed="true" preprocess="xml-stripblanks">login/dialog.ui</file>
         <file compressed="true">style.css</file>
+
+        <file preprocess="xml-stripblanks">icons/scalable/actions/archive-symbolic.svg</file>
+        <file preprocess="xml-stripblanks">icons/scalable/actions/drafts-symbolic.svg</file>
+        <file preprocess="xml-stripblanks">icons/scalable/actions/inbox-symbolic.svg</file>
+        <file preprocess="xml-stripblanks">icons/scalable/actions/junk-symbolic.svg</file>
+        <file preprocess="xml-stripblanks">icons/scalable/actions/labels-symbolic.svg</file>
+        <file preprocess="xml-stripblanks">icons/scalable/actions/outbox-symbolic.svg</file>
+        <file preprocess="xml-stripblanks">icons/scalable/actions/sent-symbolic.svg</file>
     </gresource>
 </gresources>
